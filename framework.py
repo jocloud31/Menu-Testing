@@ -21,24 +21,40 @@ menuCancel = pygame.mixer.Sound("FF7cancel.wav")
 menuWrong = pygame.mixer.Sound("FF7no.wav")
 menuMove = pygame.mixer.Sound("FF7move.wav")
 
+msg = ""
+XPos = YPos = 0
+color = 0
 
 displayWidth = 800
 displayHeight = 600
 font = pygame.font.SysFont(None, 25)
-
-#create display
 gameDisplay = pygame.display.set_mode((displayWidth,displayHeight))
-pygame.display.set_caption("Welcome!")
+images = ["VII-1.jpg","VII-2.jpg","IX-1.jpg","IX-2.jpg","IX-3.jpg","IX-4.jpg"]
+imagesIndex = 0
 
-#initialize functions
-def resetDisplay():
-    gameDisplay.fill(white)
-    pygame.display.update()
 
-def displayText(msg,textX,textY,color):
-    on_screen = font.render(msg, True, color)
-    gameDisplay.blit(on_screen, [textX,textY])
+class controlDisplay(msg,XPos,YPos,color):
+    def __init__(self):
+        pass
 
+    def gameDisplay(self,):
+        pygame.display.set_mode((displayWidth,displayHeight))
+        pygame.display.set_caption("Welcome!")
+
+    def displayText(self,msg,XPos,YPos,color):
+        on_screen = font.render(msg, True, color)
+        gameDisplay.blit(on_screen, [XPos,YPos])
+
+    def resetDisplay(self,color):
+        gameDisplay.fill(color)
+        pygame.display.update()
+        
+    def loadImage(self,images,imagesIndex):
+        imageToLoad = images[imagesIndex]
+        displayImage = pygame.image.load(os.path.join("C:/Users/Jay/Documents/LiClipse Workspace/LD32-Take-2/beginning", imageToLoad))
+        gameDisplay.blit(displayImage,(0,0))
+        pygame.display.update()
+        
 class Game(object):
 	def __init__(self):
 		pass
@@ -55,10 +71,10 @@ class Game(object):
 		while gameRunning:
 			while mainMenu:
 				gameDisplay.fill(white)
-				displayText("Please select an option",50,50,black)
-				displayText("\"ENTER\": Play",75,75,black)
-				displayText("\"S\" Key: Viewer",75,100,black)
-				displayText("\"ESCAPE\": Quit",75,125,black)
+				controlDisplay.displayText("Please select an option",50,50,black)
+				controlDisplay.displayText("\"ENTER\": Play",75,75,black)
+				controlDisplay.displayText("\"S\" Key: Viewer",75,100,black)
+				controlDisplay.displayText("\"ESCAPE\": Quit",75,125,black)
 				pygame.display.update()
 				for event in pygame.event.get():
 					if event.type == pygame.QUIT:
@@ -75,8 +91,7 @@ class Game(object):
 							mainMenu = False
 							inGame = True
 							menuSelect.play()
-							gameDisplay.fill(white)
-							pygame.display.update()
+							controlDisplay.resetDisplay(white)
 						elif key[pygame.K_s]:
 							mainMenu = False
 							inViewer = True
@@ -86,7 +101,7 @@ class Game(object):
 
 			while gameOver:
 				gameDisplay.fill(black)
-				displayText("Game Over, press \"ENTER\" to return to the main menu or \"ESCAPE\" to quit",50,50,red)
+				controlDisplay.displayText("Game Over, press \"ENTER\" to return to the main menu or \"ESCAPE\" to quit",50,50,red)
 				pygame.display.update()
 				for event in pygame.event.get():
 					if event.type == pygame.QUIT:
@@ -107,8 +122,8 @@ class Game(object):
 
 			while quitting:
 				gameDisplay.fill(black)
-				displayText("Are you sure you want to quit?",50,50,red)
-				displayText( "Press \"ENTER\" to quit or \"ESCAPE\" to go back to menu",50,75,red)
+				controlDisplay.displayText("Are you sure you want to quit?",50,50,red)
+				controlDisplay.displayText( "Press \"ENTER\" to quit or \"ESCAPE\" to go back to menu",50,75,red)
 				pygame.display.update()
 				for event in pygame.event.get():
 					if event.type == pygame.QUIT:
@@ -129,7 +144,7 @@ class Game(object):
 
 			while inGame:
 				randColor = (0,0,0)
-				displayText("Press \"ESCAPE\" to return to menu",50,50,black)
+				controlDisplay.displayText("Press \"ESCAPE\" to return to menu",50,50,black)
 				for event in pygame.event.get():
 					if event.type == pygame.QUIT:
 						inGame = False
@@ -143,19 +158,17 @@ class Game(object):
 							menuCancel.play()
 						elif key[pygame.K_RETURN]:
 							menuSelect.play()
-							randX = random.randrange(0,500)
-							randY = random.randrange(0,500)
+							randX,randY = random.randrange(0,500)
 							randColor = random.randrange(0,255),random.randrange(0,255),random.randrange(0,255)
 							gameDisplay.fill(randColor)
-							displayText("You played the game!",randX,randY,black)
+							controlDisplay.displayText("You played the game!",randX,randY,black)
 						else:
 							menuWrong.play()
 				pygame.display.update()
 
 
 			while inViewer:
-				displayText("Press \"ESCAPE\" to return to menu",50,50,black)
-				images = ["VII-1.jpg","VII-2.jpg","IX-1.jpg","IX-2.jpg","IX-3.jpg","IX-4.jpg"]
+				controlDisplay.displayText("Press \"ESCAPE\" to return to menu",50,50,black)
 				for event in pygame.event.get():
 					if event.type == pygame.QUIT:
 						inViewer = False
@@ -179,12 +192,10 @@ class Game(object):
 								imagesIndex = 0
 							else:
 								imagesIndex += 1
-				imageToLoad = images[imagesIndex]
-				displayImage = pygame.image.load(os.path.join("C:/Users/Jay/Documents/LiClipse Workspace/LD32-Take-2/beginning", imageToLoad))
-				gameDisplay.blit(displayImage,(0,0))
-				pygame.display.update()
+                    
+                controlDisplay.loadImage(images,imagesIndex)
 
-			pygame.display.update()
+                pygame.display.update()
 
 		pygame.quit()
 		quit()
